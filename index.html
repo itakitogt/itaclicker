@@ -19,13 +19,13 @@
             background: rgba(0, 0, 0, 0.7); display: none; z-index: 99;
         }
 
-        /* Botones alineados en la esquina superior derecha */
+        /* Botones en la esquina superior derecha */
         .botones-derecha {
             position: absolute; top: 20px; right: 20px; 
             display: flex; flex-direction: column; align-items: flex-end; 
             gap: 12px; z-index: 100;
         }
-        #btn-google-play { cursor: pointer; transition: transform 0.2s; }
+        #btn-google-play { cursor: pointer; }
         #btn-x-post { background: #000; color: white; padding: 10px 20px; border-radius: 50% 10% 50% 10%; text-decoration: none; font-weight: bold; }
 
         /* Animación del cartel colgado */
@@ -50,17 +50,24 @@
             display: none; z-index: 101; mix-blend-mode: multiply; 
         }
 
+        /* Gatito Dansi (normal) para la fase de 50 clics */
+        #dansi-hacker {
+            position: absolute; bottom: 20px; right: 20px; width: 180px;
+            display: none; z-index: 100;
+        }
+
         /* Contador abajo de la carita */
         #contador { font-size: 50px; color: white; text-shadow: 2px 2px 4px #000; margin-top: 20px; z-index: 100; }
 
         /* Consola de Logs Hackers */
         #log-container { 
-            position: absolute; bottom: 20px; left: 20px; color: #00ff00; 
-            font-family: monospace; font-size: 20px; font-weight: bold; 
-            max-height: 200px; overflow: hidden; display: none; z-index: 100; 
+            position: absolute; top: 150px; left: 20px; color: #00ff00; 
+            font-family: monospace; font-size: 22px; font-weight: bold; 
+            max-height: 300px; overflow: hidden; display: none; z-index: 100; 
+            text-shadow: 1px 1px 2px #000;
         }
 
-        /* Responsivo para celulares */
+        /* Responsivo para pantallas chicas */
         @media screen and (max-width: 768px) {
             .botones-derecha { position: relative; top: auto; right: auto; margin-bottom: 20px; align-items: center; }
             #troll-img { width: 180px; }
@@ -74,6 +81,8 @@
 
     <img id="dansi2-esquina" src="dansi2.gif" alt="Gatito Caos">
 
+    <img id="dansi-hacker" src="dansi.gif" alt="Gatito Hacker">
+
     <div class="botones-derecha" id="menu-botones">
         <div id="btn-google-play"><img src="getin.png" alt="Google Play" width="250"></div>
         <a href="https://twitter.com/intent/tweet?text=Mira%20esta%20pagina%20troll%20Itaclicker.wtf" target="_blank" id="btn-x-post">X Post</a>
@@ -85,25 +94,25 @@
     <div id="log-container"></div>
 
     <script>
-        // Clics normales, SIN guardar datos en el navegador
         let clicks = 0;
         
         const imagen = document.getElementById('troll-img');
         const displayContador = document.getElementById('contador');
         const overlay = document.getElementById('overlay-negro');
-        const gatitoEsquina = document.getElementById('dansi2-esquina');
+        const gatitoDansi2 = document.getElementById('dansi2-esquina');
+        const gatitoDansi = document.getElementById('dansi-hacker');
         const botones = document.getElementById('menu-botones');
         const log = document.getElementById('log-container');
         
         const audioHacked = new Audio('Hacked.mp3');
         audioHacked.loop = true;
 
-        // Función para abrir popups molestos
+        // Función para detonar las ventanas popup
         const explotarPopup = () => {
             window.open('popup.html', '_blank', 'width=300,height=300');
         };
 
-        // El botón de Google Play también tira popups al tocarlo
+        // El botón de Google Play abre popups si lo tocan manualmente
         document.getElementById('btn-google-play').addEventListener('click', explotarPopup);
 
         imagen.addEventListener('click', () => {
@@ -111,42 +120,42 @@
             displayContador.innerText = clicks;
             document.title = "ItakitoClicker - " + clicks;
 
-            // Cada click normal abre un popup en segundo plano para saturar
-            explotarPopup();
+            // --- DE 1 A 19 CLICS: TODO ES NORMAL (NO ABRE POPUPS) ---
 
-            // Cambio de fase intermedio
             if (clicks === 10) {
                 imagen.src = 'hewillnever.png';
             }
 
-            // META 20 CLICS: Limpia esta pestaña, pone el gatito x3 con fondo oscuro y abre el clon limpio
+            // --- FASE 1: 20 CLICS EXACTOS ---
             if (clicks === 20) {
                 audioHacked.play();
                 
-                // Escondemos todo lo del centro y derecha en ESTA ventana
+                // Desaparece todo el contenido del centro y la derecha
                 imagen.style.display = 'none';
                 botones.style.display = 'none';
                 displayContador.style.display = 'none';
                 
-                // Activamos el overlay negro y ponemos el gatito de 300x300 arriba a la izquierda
+                // Muestra el fondo negro opaco y el dansi2.gif gigante (300x300) arriba a la izquierda
                 overlay.style.display = 'block';
-                gatitoEsquina.style.display = 'block';
+                gatitoDansi2.style.display = 'block';
 
-                // Abre una pestaña nueva idéntica que empieza TOTALMENTE desde 0 clics
+                // Abre la OTRA pestaña limpia que empieza desde cero clics
                 window.open(window.location.href, '_blank');
             }
 
-            // META 50 CLICS: (Esto pasará si siguen clickeando en una pestaña nueva hasta llegar a 50)
+            // --- FASE 2: 50 CLICS (Si siguen dándole en la nueva ventana) ---
             if (clicks >= 50) {
                 log.style.display = 'block';
+                gatitoDansi.style.display = 'block'; // Aparece el dansi.gif al lado de los textos
+
                 const sitios = ["TikTok", "Amazon", "YouTube", "GitHub", "Discord", "Steam", "Roblox", "Netflix"];
                 
-                // Bucle loco de logs falsos y popups automáticos cada medio segundo
+                // Bucle de hackeo automático: escribe líneas y bugea la PC con popups infinitos
                 setInterval(() => {
                     const sitioRandom = sitios[Math.floor(Math.random() * sitios.length)];
                     log.innerHTML += "Logeandome en " + sitioRandom + "...<br>";
                     explotarPopup();
-                }, 500);
+                }, 400);
             }
         });
     </script>
