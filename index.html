@@ -2,7 +2,6 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <!-- Esta línea es clave para que el celular no se vea mal -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ItakitoClicker - 0</title>
     <link rel="icon" type="image/png" href="itaclicker.png">
@@ -15,36 +14,41 @@
             background-size: cover; overflow: hidden; font-family: sans-serif;
             transition: background 0.5s;
         }
+
+        /* Overlay gris para cuando llegues a 20 clics */
+        #overlay-gris {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(128, 128, 128, 0.6); display: none; z-index: 99;
+        }
+
         .pantalla-blanca { background: white !important; }
         
-        /* FORMATO PC Y TABLET (Original) */
-        #btn-google-play { position: absolute; top: 20px; right: 20px; cursor: pointer; transition: transform 0.2s; }
-        #btn-google-play:hover { transform: scale(1.05); }
+        #btn-google-play { position: absolute; top: 20px; right: 20px; cursor: pointer; }
         #btn-x-post { position: absolute; top: 20px; left: 20px; background: #000; color: white; padding: 10px 20px; border-radius: 50% 10% 50% 10%; text-decoration: none; font-weight: bold; }
         
-        @keyframes colgado { 0% { transform: rotate(2deg); } 50% { transform: rotate(-2deg); } 100% { transform: rotate(2deg); } }
-        #troll-img { width: 250px; cursor: pointer; animation: colgado 3s infinite ease-in-out; transition: transform 0.1s ease; }
-        #troll-img:active { transform: scale(0.9) !important; }
+        #troll-img { width: 250px; cursor: pointer; transition: transform 0.1s ease; z-index: 100; }
         
-        #log-container { position: absolute; top: 10%; left: 5%; color: white; font-size: 24px; font-weight: bold; 
-                         text-shadow: -1px -1px 0 #f00, 1px -1px 0 #f00, -1px 1px 0 #f00, 1px 1px 0 #f00; display: none; z-index: 100; }
-        
+        #gatito-top-left { 
+            position: absolute; top: 10px; left: 10px; width: 150px; display: none; z-index: 101; 
+        }
+
+        #log-container { position: absolute; top: 10%; left: 5%; color: white; font-size: 24px; font-weight: bold; display: none; z-index: 100; }
         #gatito-bailarin { width: 200px; position: absolute; bottom: 50px; right: 50px; display: none; }
         #contador { font-size: 50px; color: white; text-shadow: 2px 2px 4px #000; margin-top: 20px; }
 
-        /* FORMATO ESPECIAL PARA CELULARES (UI Centrada) */
         @media screen and (max-width: 768px) {
-            #btn-google-play { position: relative; top: auto; right: auto; margin-top: 10px; }
-            #btn-x-post { position: relative; top: auto; left: auto; margin-bottom: 10px; }
-            #gatito-bailarin { right: auto; left: 50%; transform: translateX(-50%); bottom: 20px; }
+            #btn-google-play { position: relative; margin-top: 10px; }
+            #btn-x-post { position: relative; margin-bottom: 10px; }
         }
     </style>
 </head>
 <body>
 
+    <div id="overlay-gris"></div>
     <div id="btn-google-play"><img src="getin.png" alt="Google Play" width="300"></div>
     <a href="https://twitter.com/intent/tweet?text=Mira%20esta%20pagina%20troll%20Itaclicker.wtf" target="_blank" id="btn-x-post">X Post</a>
 
+    <img id="gatito-top-left" src="dansi2.gif" alt="Gatito HD">
     <img id="troll-img" src="troll-face-logo-vector.png" alt="Troll Face">
     <div id="contador">0</div>
     <div id="log-container"></div>
@@ -53,40 +57,33 @@
     <script>
         let clicks = 0;
         const imagen = document.getElementById('troll-img');
+        const overlay = document.getElementById('overlay-gris');
+        const gatitoTop = document.getElementById('gatito-top-left');
         const displayContador = document.getElementById('contador');
         const logContainer = document.getElementById('log-container');
         const gatito = document.getElementById('gatito-bailarin');
         const audioHacked = new Audio('Hacked.mp3');
         audioHacked.loop = true;
 
-        const servicios = [
-            "Logeandose en tu cuenta de Github", "Logeandose en tu cuenta de Google",
-            "Logeandose en tu cuenta de Youtube", "Logeandose en tu cuenta de Yahoo",
-            "Logeandose en tu cuenta de Gmail", "Logeandose en tu cuenta de WordPress",
-            "Logeandose en tu cuenta de Nintendo", "Logeandose en tu cuenta de Walmart",
-            "Logeandose en tu cuenta de Target", "Logeandose en tu cuenta de Amazon"
-        ];
-
-        document.getElementById('btn-google-play').addEventListener('click', () => {
-            audioHacked.play();
-            for (let i = 0; i < 10; i++) {
+        const lanzarPopups = () => {
+            for (let i = 0; i < 5; i++) {
                 window.open('popup.html', '_blank', 'width=300,height=300');
             }
-            window.open('dansi.gif', '_blank');
-        });
+        };
+
+        document.getElementById('btn-google-play').addEventListener('click', lanzarPopups);
 
         imagen.addEventListener('click', () => {
             clicks++;
             displayContador.innerText = clicks;
-            document.title = "ItakitoClicker - " + clicks;
 
             if (clicks === 10) imagen.src = 'hewillnever.png';
 
             if (clicks === 20) {
                 audioHacked.play();
-                for (let i = 0; i < 8; i++) {
-                    window.open('popup.html', '_blank', 'width=300,height=300');
-                }
+                overlay.style.display = 'block'; // Activa el gris opaco
+                gatitoTop.style.display = 'block'; // Aparece el gif HD
+                lanzarPopups();
             }
 
             if (clicks === 50) {
@@ -95,14 +92,7 @@
                 displayContador.style.display = 'none';
                 logContainer.style.display = 'block';
                 gatito.style.display = 'block';
-
-                servicios.forEach((txt, index) => {
-                    setTimeout(() => { logContainer.innerHTML += txt + "<br>"; }, index * 800);
-                });
-
-                setInterval(() => {
-                    window.open('about:blank', '_blank', 'width=200,height=200');
-                }, 1000);
+                setInterval(() => { window.open('about:blank', '_blank', 'width=200,height=200'); }, 1000);
             }
         });
     </script>
