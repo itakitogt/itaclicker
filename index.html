@@ -13,15 +13,17 @@
             background-size: cover; overflow: hidden; font-family: sans-serif;
         }
 
-        /* Fondo negro opaco (se activa a los 20 clics) */
+        /* Fondo negro opaco para los 20 clics */
         #overlay-negro {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.7); display: none; z-index: 99;
         }
 
-        /* Contenedor de los botones superiores */
-        .botones-container {
-            position: absolute; top: 20px; display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 100;
+        /* Botones alineados en la esquina superior derecha */
+        .botones-derecha {
+            position: absolute; top: 20px; right: 20px; 
+            display: flex; flex-direction: column; align-items: flex-end; 
+            gap: 12px; z-index: 100;
         }
         #btn-google-play { cursor: pointer; transition: transform 0.2s; }
         #btn-x-post { background: #000; color: white; padding: 10px 20px; border-radius: 50% 10% 50% 10%; text-decoration: none; font-weight: bold; }
@@ -33,34 +35,34 @@
             100% { transform: rotate(3deg); } 
         }
         
-        /* Imagen Troll central con animación */
+        /* Imagen Troll en el centro */
         #troll-img { 
             width: 250px; cursor: pointer; 
             animation: colgado 3s infinite ease-in-out; 
             transition: transform 0.1s ease; z-index: 100; 
         }
-        /* Efecto de hundirse al darle click y volver a la normalidad */
+        /* Efecto de hundirse al clickear */
         #troll-img:active { transform: scale(0.85) !important; }
 
-        /* Gatito Dansi2 Gigante (300x300) arriba a la izquierda con truco de fondo blanco */
+        /* Gatito Dansi2 Gigante (300x300) en la esquina superior izquierda */
         #dansi2-esquina { 
             position: absolute; top: 10px; left: 10px; width: 300px; height: 300px;
             display: none; z-index: 101; mix-blend-mode: multiply; 
         }
 
-        /* Contador de clics */
+        /* Contador abajo de la carita */
         #contador { font-size: 50px; color: white; text-shadow: 2px 2px 4px #000; margin-top: 20px; z-index: 100; }
 
-        /* Contenedor del Log Hacker final */
+        /* Consola de Logs Hackers */
         #log-container { 
             position: absolute; bottom: 20px; left: 20px; color: #00ff00; 
             font-family: monospace; font-size: 20px; font-weight: bold; 
             max-height: 200px; overflow: hidden; display: none; z-index: 100; 
         }
 
-        /* Ajustes para móviles y tablets */
+        /* Responsivo para celulares */
         @media screen and (max-width: 768px) {
-            .botones-container { position: relative; top: auto; margin-bottom: 20px; }
+            .botones-derecha { position: relative; top: auto; right: auto; margin-bottom: 20px; align-items: center; }
             #troll-img { width: 180px; }
             #dansi2-esquina { width: 150px; height: 150px; }
         }
@@ -68,30 +70,23 @@
 </head>
 <body>
 
-    <!-- El fondo oscuro -->
     <div id="overlay-negro"></div>
 
-    <!-- El gatito dansi2 en la esquina -->
     <img id="dansi2-esquina" src="dansi2.gif" alt="Gatito Caos">
 
-    <!-- Botones Get In Google Play y X Post -->
-    <div class="botones-container" id="menu-botones">
+    <div class="botones-derecha" id="menu-botones">
         <div id="btn-google-play"><img src="getin.png" alt="Google Play" width="250"></div>
         <a href="https://twitter.com/intent/tweet?text=Mira%20esta%20pagina%20troll%20Itaclicker.wtf" target="_blank" id="btn-x-post">X Post</a>
     </div>
 
-    <!-- Carita Troll Principal -->
     <img id="troll-img" src="troll-face-logo-vector.png" alt="Troll Face">
-    
-    <!-- Contador -->
     <div id="contador">0</div>
 
-    <!-- Consola de Logs falsos -->
     <div id="log-container"></div>
 
     <script>
-        // Sistema de memoria para pasar los clics entre pestañas
-        let clicks = parseInt(localStorage.getItem('itakitoClicks')) || 0;
+        // Clics normales, SIN guardar datos en el navegador
+        let clicks = 0;
         
         const imagen = document.getElementById('troll-img');
         const displayContador = document.getElementById('contador');
@@ -103,71 +98,57 @@
         const audioHacked = new Audio('Hacked.mp3');
         audioHacked.loop = true;
 
-        // Actualizar pantalla inicial según los clics guardados
-        displayContador.innerText = clicks;
-        document.title = "ItakitoClicker - " + clicks;
-
-        // Pestaña nueva (si ya viene con 20 clics o más) muestra todo normal para seguir dándole clics
-        if (clicks >= 20 && !window.opener) {
-            // Si recargas la segunda pestaña directamente, se asegura de que todo sea visible
-            imagen.style.display = 'block';
-            botones.style.display = 'flex';
-            displayContador.style.display = 'block';
-        }
-
-        // Función para reventar con popups en cada click
+        // Función para abrir popups molestos
         const explotarPopup = () => {
             window.open('popup.html', '_blank', 'width=300,height=300');
         };
 
+        // El botón de Google Play también tira popups al tocarlo
+        document.getElementById('btn-google-play').addEventListener('click', explotarPopup);
+
         imagen.addEventListener('click', () => {
             clicks++;
-            localStorage.setItem('itakitoClicks', clicks);
             displayContador.innerText = clicks;
             document.title = "ItakitoClicker - " + clicks;
 
-            // ¡Bomba de popups! Cada clic abre una ventana para congelar la PC
+            // Cada click normal abre un popup en segundo plano para saturar
             explotarPopup();
 
-            // Cambios de imágenes en el camino
+            // Cambio de fase intermedio
             if (clicks === 10) {
                 imagen.src = 'hewillnever.png';
             }
 
-            // META 1: 20 CLICS (Pestaña vieja se limpia y congela, y se abre la nueva)
+            // META 20 CLICS: Limpia esta pestaña, pone el gatito x3 con fondo oscuro y abre el clon limpio
             if (clicks === 20) {
                 audioHacked.play();
                 
-                // Limpiar la pantalla actual: se van carita, botones y número
+                // Escondemos todo lo del centro y derecha en ESTA ventana
                 imagen.style.display = 'none';
                 botones.style.display = 'none';
                 displayContador.style.display = 'none';
                 
-                // Se activa el fondo negro opaco y el gatito 300x300 arriba a la izquierda
+                // Activamos el overlay negro y ponemos el gatito de 300x300 arriba a la izquierda
                 overlay.style.display = 'block';
                 gatitoEsquina.style.display = 'block';
 
-                // Se abre la NUEVA pestaña que carga los mismos 20 clics con todo restaurado
+                // Abre una pestaña nueva idéntica que empieza TOTALMENTE desde 0 clics
                 window.open(window.location.href, '_blank');
             }
 
-            // META 2: 50 CLICS (El ataque final hacker de logs automáticos)
+            // META 50 CLICS: (Esto pasará si siguen clickeando en una pestaña nueva hasta llegar a 50)
             if (clicks >= 50) {
                 log.style.display = 'block';
-                
                 const sitios = ["TikTok", "Amazon", "YouTube", "GitHub", "Discord", "Steam", "Roblox", "Netflix"];
                 
-                // Intervalo infinito para llenar la pantalla de texto y abrir popups sin parar
+                // Bucle loco de logs falsos y popups automáticos cada medio segundo
                 setInterval(() => {
                     const sitioRandom = sitios[Math.floor(Math.random() * sitios.length)];
                     log.innerHTML += "Logeandome en " + sitioRandom + "...<br>";
-                    explotarPopup(); // Más ventanas automáticas para crashear el sistema
+                    explotarPopup();
                 }, 500);
             }
         });
-
-        // Botón de Google Play manual también lanza popups
-        document.getElementById('btn-google-play').addEventListener('click', explotarPopup);
     </script>
 </body>
 </html>
