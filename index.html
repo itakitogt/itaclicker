@@ -13,7 +13,7 @@
             background-size: cover; overflow: hidden; font-family: sans-serif;
         }
 
-        /* Fondo negro opaco para los 20 clics */
+        /* Fondo negro opaco para la fase del dansi2 */
         #overlay-negro {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.7); display: none; z-index: 99;
@@ -28,7 +28,7 @@
         #btn-google-play { cursor: pointer; }
         #btn-x-post { background: #000; color: white; padding: 10px 20px; border-radius: 50% 10% 50% 10%; text-decoration: none; font-weight: bold; }
 
-        /* Animación del cartel colgado */
+        /* Animación del cartel colgado (solo para la carita troll) */
         @keyframes colgado { 
             0% { transform: rotate(3deg); } 
             50% { transform: rotate(-3deg); } 
@@ -41,22 +41,25 @@
             animation: colgado 3s infinite ease-in-out; 
             transition: transform 0.1s ease; z-index: 100; 
         }
-        /* Efecto de hundirse al clickear */
+        /* Efecto de hundirse al clickear la carita */
         #troll-img:active { transform: scale(0.85) !important; }
 
-        /* Gatito Dansi2 Gigante (300x300) en la esquina superior izquierda */
+        /* Gatito Dansi2 Gigante (300x300) arriba a la izquierda */
         #dansi2-esquina { 
             position: absolute; top: 10px; left: 10px; width: 300px; height: 300px;
-            display: none; z-index: 101; mix-blend-mode: multiply; 
+            display: none; cursor: pointer; z-index: 101; mix-blend-mode: multiply; 
+            transition: transform 0.1s ease;
         }
+        /* Efecto de hundirse al clickear el gatito (sin animación de cartel) */
+        #dansi2-esquina:active { transform: scale(0.85) !important; }
 
-        /* Gatito Dansi (normal) para la fase de 50 clics */
+        /* Gatito Dansi (normal) para la fase final de 50 clics */
         #dansi-hacker {
             position: absolute; bottom: 20px; right: 20px; width: 180px;
             display: none; z-index: 100;
         }
 
-        /* Contador abajo de la carita */
+        /* Contador abajo de los objetivos */
         #contador { font-size: 50px; color: white; text-shadow: 2px 2px 4px #000; margin-top: 20px; z-index: 100; }
 
         /* Consola de Logs Hackers */
@@ -67,7 +70,7 @@
             text-shadow: 1px 1px 2px #000;
         }
 
-        /* Responsivo para pantallas chicas */
+        /* Responsivo para celulares y tablets */
         @media screen and (max-width: 768px) {
             .botones-derecha { position: relative; top: auto; right: auto; margin-bottom: 20px; align-items: center; }
             #troll-img { width: 180px; }
@@ -89,6 +92,7 @@
     </div>
 
     <img id="troll-img" src="troll-face-logo-vector.png" alt="Troll Face">
+    
     <div id="contador">0</div>
 
     <div id="log-container"></div>
@@ -107,57 +111,62 @@
         const audioHacked = new Audio('Hacked.mp3');
         audioHacked.loop = true;
 
-        // Función para detonar las ventanas popup
+        // Función de popups
         const explotarPopup = () => {
             window.open('popup.html', '_blank', 'width=300,height=300');
         };
 
-        // El botón de Google Play abre popups si lo tocan manualmente
+        // Si tocan Google Play tira popups manualmente
         document.getElementById('btn-google-play').addEventListener('click', explotarPopup);
 
-        imagen.addEventListener('click', () => {
+        // --- FUNCIÓN CENTRAL DE CONTEO ---
+        const registrarClick = () => {
             clicks++;
             displayContador.innerText = clicks;
             document.title = "ItakitoClicker - " + clicks;
-
-            // --- DE 1 A 19 CLICS: TODO ES NORMAL (NO ABRE POPUPS) ---
 
             if (clicks === 10) {
                 imagen.src = 'hewillnever.png';
             }
 
-            // --- FASE 1: 20 CLICS EXACTOS ---
+            // FASE 20 CLICS: Todo en la misma pestaña
             if (clicks === 20) {
                 audioHacked.play();
                 
-                // Desaparece todo el contenido del centro y la derecha
+                // Ocultamos la carita troll y el menú de la derecha
                 imagen.style.display = 'none';
                 botones.style.display = 'none';
-                displayContador.style.display = 'none';
                 
-                // Muestra el fondo negro opaco y el dansi2.gif gigante (300x300) arriba a la izquierda
+                // Activamos el fondo negro opaco y el gatito dansi2.gif (300x300) arriba a la izquierda
                 overlay.style.display = 'block';
                 gatitoDansi2.style.display = 'block';
-
-                // Abre la OTRA pestaña limpia que empieza desde cero clics
-                window.open(window.location.href, '_blank');
             }
 
-            // --- FASE 2: 50 CLICS (Si siguen dándole en la nueva ventana) ---
+            // FASE 50 CLICS: El colapso total del sistema
             if (clicks >= 50) {
+                // Quitamos el gatito dansi2 y el overlay oscuro para pasar a la fase final
+                gatitoDansi2.style.display = 'none';
+                overlay.style.display = 'none';
+                
+                // Hacemos que regresen los botones de Google Play y aparezca el log con el dansi.gif
+                botones.style.display = 'flex';
                 log.style.display = 'block';
-                gatitoDansi.style.display = 'block'; // Aparece el dansi.gif al lado de los textos
+                gatitoDansi.style.display = 'block';
 
                 const sitios = ["TikTok", "Amazon", "YouTube", "GitHub", "Discord", "Steam", "Roblox", "Netflix"];
                 
-                // Bucle de hackeo automático: escribe líneas y bugea la PC con popups infinitos
+                // Bucle repetitivo para crashear el navegador
                 setInterval(() => {
                     const sitioRandom = sitios[Math.floor(Math.random() * sitios.length)];
                     log.innerHTML += "Logeandome en " + sitioRandom + "...<br>";
                     explotarPopup();
                 }, 400);
             }
-        });
+        };
+
+        // Escuchadores de clics: la carita troll te lleva a los 20, y el gatito dansi2 te lleva a los 50
+        imagen.addEventListener('click', registrarClick);
+        gatitoDansi2.addEventListener('click', registrarClick);
     </script>
 </body>
 </html>
