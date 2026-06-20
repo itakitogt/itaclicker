@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { margin: 0; background: black; display: flex; align-items: center; justify-content: center; height: 100vh; }
+        h1 { color: red; font-size: 20px; font-family: sans-serif; text-align: center; }
+    </style>
+</head>
+<body>
+    <h1 id="mensaje"></h1>
+    <script>
+        // Recibe el mensaje desde la URL y lo pone en el h1
+        const params = new URLSearchParams(window.location.search);
+        document.getElementById('mensaje').innerText = params.get('msg');
+    </script>
+</body>
+</html>
