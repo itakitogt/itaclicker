@@ -2,64 +2,172 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>ItakitoClicker - Final</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ItakitoClicker</title>
     <style>
-        body { margin: 0; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; 
-               background: url('fondo.png') no-repeat center center fixed; background-size: cover; overflow: hidden; font-family: sans-serif; }
+        /* Fondo principal de la página */
+        body { 
+            margin: 0; height: 100vh; display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; 
+            background: url('fondo.png') no-repeat center center fixed;
+            background-size: cover; overflow: hidden; font-family: sans-serif;
+        }
+
+        /* Fondo negro opaco (se activa a los 20 clics) */
+        #overlay-negro {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7); display: none; z-index: 99;
+        }
+
+        /* Contenedor de los botones superiores */
+        .botones-container {
+            position: absolute; top: 20px; display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 100;
+        }
+        #btn-google-play { cursor: pointer; transition: transform 0.2s; }
+        #btn-x-post { background: #000; color: white; padding: 10px 20px; border-radius: 50% 10% 50% 10%; text-decoration: none; font-weight: bold; }
+
+        /* Animación del cartel colgado */
+        @keyframes colgado { 
+            0% { transform: rotate(3deg); } 
+            50% { transform: rotate(-3deg); } 
+            100% { transform: rotate(3deg); } 
+        }
         
-        #btn-google-play { position: absolute; top: 20px; right: 20px; width: 200px; display: none; }
-        #log-container { position: absolute; top: 100px; left: 20px; color: #ff0000; font-size: 20px; font-weight: bold; display: none; }
-        #dansi-esquina { position: absolute; top: 10px; left: 10px; width: 150px; display: none; }
-        
-        #troll-img { width: 250px; cursor: pointer; animation: colgado 3s infinite ease-in-out; }
-        @keyframes colgado { 0% { transform: rotate(2deg); } 50% { transform: rotate(-2deg); } 100% { transform: rotate(2deg); } }
-        
-        #contador { font-size: 50px; color: white; text-shadow: 2px 2px 4px #000; margin-top: 20px; }
+        /* Imagen Troll central con animación */
+        #troll-img { 
+            width: 250px; cursor: pointer; 
+            animation: colgado 3s infinite ease-in-out; 
+            transition: transform 0.1s ease; z-index: 100; 
+        }
+        /* Efecto de hundirse al darle click y volver a la normalidad */
+        #troll-img:active { transform: scale(0.85) !important; }
+
+        /* Gatito Dansi2 Gigante (300x300) arriba a la izquierda con truco de fondo blanco */
+        #dansi2-esquina { 
+            position: absolute; top: 10px; left: 10px; width: 300px; height: 300px;
+            display: none; z-index: 101; mix-blend-mode: multiply; 
+        }
+
+        /* Contador de clics */
+        #contador { font-size: 50px; color: white; text-shadow: 2px 2px 4px #000; margin-top: 20px; z-index: 100; }
+
+        /* Contenedor del Log Hacker final */
+        #log-container { 
+            position: absolute; bottom: 20px; left: 20px; color: #00ff00; 
+            font-family: monospace; font-size: 20px; font-weight: bold; 
+            max-height: 200px; overflow: hidden; display: none; z-index: 100; 
+        }
+
+        /* Ajustes para móviles y tablets */
+        @media screen and (max-width: 768px) {
+            .botones-container { position: relative; top: auto; margin-bottom: 20px; }
+            #troll-img { width: 180px; }
+            #dansi2-esquina { width: 150px; height: 150px; }
+        }
     </style>
 </head>
 <body>
 
-    <img id="dansi-esquina" src="dansi.gif" alt="Dansi">
-    <img id="btn-google-play" src="getin.png" alt="Google Play">
+    <!-- El fondo oscuro -->
+    <div id="overlay-negro"></div>
+
+    <!-- El gatito dansi2 en la esquina -->
+    <img id="dansi2-esquina" src="dansi2.gif" alt="Gatito Caos">
+
+    <!-- Botones Get In Google Play y X Post -->
+    <div class="botones-container" id="menu-botones">
+        <div id="btn-google-play"><img src="getin.png" alt="Google Play" width="250"></div>
+        <a href="https://twitter.com/intent/tweet?text=Mira%20esta%20pagina%20troll%20Itaclicker.wtf" target="_blank" id="btn-x-post">X Post</a>
+    </div>
+
+    <!-- Carita Troll Principal -->
     <img id="troll-img" src="troll-face-logo-vector.png" alt="Troll Face">
+    
+    <!-- Contador -->
     <div id="contador">0</div>
+
+    <!-- Consola de Logs falsos -->
     <div id="log-container"></div>
 
     <script>
+        // Sistema de memoria para pasar los clics entre pestañas
         let clicks = parseInt(localStorage.getItem('itakitoClicks')) || 0;
-        const displayContador = document.getElementById('contador');
+        
         const imagen = document.getElementById('troll-img');
+        const displayContador = document.getElementById('contador');
+        const overlay = document.getElementById('overlay-negro');
+        const gatitoEsquina = document.getElementById('dansi2-esquina');
+        const botones = document.getElementById('menu-botones');
         const log = document.getElementById('log-container');
-        displayContador.innerText = clicks;
+        
+        const audioHacked = new Audio('Hacked.mp3');
+        audioHacked.loop = true;
 
-        // Si ya pasamos de 20, ocultar elementos iniciales en la nueva pestaña
-        if (clicks >= 20) {
-            document.getElementById('btn-x-post')?.remove();
+        // Actualizar pantalla inicial según los clics guardados
+        displayContador.innerText = clicks;
+        document.title = "ItakitoClicker - " + clicks;
+
+        // Pestaña nueva (si ya viene con 20 clics o más) muestra todo normal para seguir dándole clics
+        if (clicks >= 20 && !window.opener) {
+            // Si recargas la segunda pestaña directamente, se asegura de que todo sea visible
+            imagen.style.display = 'block';
+            botones.style.display = 'flex';
+            displayContador.style.display = 'block';
         }
+
+        // Función para reventar con popups en cada click
+        const explotarPopup = () => {
+            window.open('popup.html', '_blank', 'width=300,height=300');
+        };
 
         imagen.addEventListener('click', () => {
             clicks++;
             localStorage.setItem('itakitoClicks', clicks);
             displayContador.innerText = clicks;
+            document.title = "ItakitoClicker - " + clicks;
 
+            // ¡Bomba de popups! Cada clic abre una ventana para congelar la PC
+            explotarPopup();
+
+            // Cambios de imágenes en el camino
+            if (clicks === 10) {
+                imagen.src = 'hewillnever.png';
+            }
+
+            // META 1: 20 CLICS (Pestaña vieja se limpia y congela, y se abre la nueva)
             if (clicks === 20) {
+                audioHacked.play();
+                
+                // Limpiar la pantalla actual: se van carita, botones y número
+                imagen.style.display = 'none';
+                botones.style.display = 'none';
+                displayContador.style.display = 'none';
+                
+                // Se activa el fondo negro opaco y el gatito 300x300 arriba a la izquierda
+                overlay.style.display = 'block';
+                gatitoEsquina.style.display = 'block';
+
+                // Se abre la NUEVA pestaña que carga los mismos 20 clics con todo restaurado
                 window.open(window.location.href, '_blank');
             }
 
+            // META 2: 50 CLICS (El ataque final hacker de logs automáticos)
             if (clicks >= 50) {
-                // Activar modo caos final
-                document.getElementById('btn-google-play').style.display = 'block';
-                document.getElementById('dansi-esquina').style.display = 'block';
                 log.style.display = 'block';
                 
-                // Mensajes de log aleatorios
-                const sitios = ["Amazon", "GitHub", "Discord", "Steam", "Roblox", "Netflix", "Google"];
+                const sitios = ["TikTok", "Amazon", "YouTube", "GitHub", "Discord", "Steam", "Roblox", "Netflix"];
+                
+                // Intervalo infinito para llenar la pantalla de texto y abrir popups sin parar
                 setInterval(() => {
-                    log.innerHTML += "Logeandose en " + sitios[Math.floor(Math.random() * sitios.length)] + "...<br>";
-                    window.open('popup.html', '_blank', 'width=300,height=300');
-                }, 800);
+                    const sitioRandom = sitios[Math.floor(Math.random() * sitios.length)];
+                    log.innerHTML += "Logeandome en " + sitioRandom + "...<br>";
+                    explotarPopup(); // Más ventanas automáticas para crashear el sistema
+                }, 500);
             }
         });
+
+        // Botón de Google Play manual también lanza popups
+        document.getElementById('btn-google-play').addEventListener('click', explotarPopup);
     </script>
 </body>
 </html>
