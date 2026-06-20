@@ -2,32 +2,61 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>ItakitoClicker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ItakitoClicker - 0</title>
+    <link rel="icon" type="image/png" href="itaclicker.png">
+    
     <style>
         body { 
-            margin: 0; height: 100vh; display: flex; align-items: center; justify-content: center; 
-            background: url('fondo.png') no-repeat center center fixed; background-size: cover;
-            overflow: hidden;
+            margin: 0; height: 100vh; display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; 
+            background: url('fondo.png') no-repeat center center fixed;
+            background-size: cover; overflow: hidden; font-family: sans-serif;
         }
+
         #overlay-gris {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(128, 128, 128, 0.6); display: none; z-index: 99;
         }
-        #dansi-grande {
-            position: absolute; top: 10px; left: 10px; 
-            width: 450px; /* Tamaño x3 original (150px * 3) */
-            display: none; z-index: 101;
-            mix-blend-mode: multiply; /* Intenta quitar fondo blanco */
+
+        /* Botones */
+        #btn-google-play { position: absolute; top: 20px; right: 20px; cursor: pointer; transition: transform 0.2s; z-index: 100; }
+        #btn-google-play:hover { transform: scale(1.05); }
+        #btn-x-post { position: absolute; top: 20px; left: 20px; background: #000; color: white; padding: 10px 20px; border-radius: 50% 10% 50% 10%; text-decoration: none; font-weight: bold; z-index: 100; }
+
+        /* Animación del cartel */
+        @keyframes colgado { 0% { transform: rotate(2deg); } 50% { transform: rotate(-2deg); } 100% { transform: rotate(2deg); } }
+        
+        #troll-img { 
+            width: 250px; cursor: pointer; animation: colgado 3s infinite ease-in-out; 
+            transition: transform 0.1s ease; z-index: 100; 
         }
-        #troll-img { width: 250px; cursor: pointer; z-index: 100; }
-        #contador { font-size: 50px; color: white; position: absolute; bottom: 20px; }
+        #troll-img:active { transform: scale(0.9) !important; }
+
+        /* Gatito x3 gigante */
+        #dansi-grande { 
+            position: absolute; top: 10px; left: 10px; width: 450px; 
+            display: none; z-index: 102; mix-blend-mode: multiply; 
+        }
+
+        #contador { font-size: 50px; color: white; text-shadow: 2px 2px 4px #000; margin-top: 20px; z-index: 100; }
+
+        /* Responsive */
+        @media screen and (max-width: 768px) {
+            #btn-google-play { position: relative; top: auto; right: auto; margin-top: 10px; }
+            #btn-x-post { position: relative; top: auto; left: auto; margin-bottom: 10px; }
+        }
     </style>
 </head>
 <body>
 
     <div id="overlay-gris"></div>
     <img id="dansi-grande" src="dansi2.gif" alt="Gatito Gigante">
-    <img id="troll-img" src="troll-face-logo-vector.png" alt="Troll">
+    
+    <div id="btn-google-play"><img src="getin.png" alt="Google Play" width="300"></div>
+    <a href="https://twitter.com/intent/tweet?text=Mira%20esta%20pagina%20troll%20Itaclicker.wtf" target="_blank" id="btn-x-post">X Post</a>
+
+    <img id="troll-img" src="troll-face-logo-vector.png" alt="Troll Face">
     <div id="contador">0</div>
 
     <script>
@@ -35,21 +64,28 @@
         const imagen = document.getElementById('troll-img');
         const overlay = document.getElementById('overlay-gris');
         const gatitoGrande = document.getElementById('dansi-grande');
-        
+        const audioHacked = new Audio('Hacked.mp3');
+        audioHacked.loop = true;
+
+        document.getElementById('btn-google-play').addEventListener('click', () => {
+            audioHacked.play();
+            for (let i = 0; i < 5; i++) window.open('popup.html', '_blank', 'width=300,height=300');
+        });
+
         imagen.addEventListener('click', () => {
             clicks++;
             document.getElementById('contador').innerText = clicks;
+            document.title = "ItakitoClicker - " + clicks;
 
+            if (clicks === 10) imagen.src = 'hewillnever.png';
+            
             if (clicks === 20) {
-                // 1. Abrir nueva pestaña
+                audioHacked.play();
+                // Abrir nueva pestaña y activar el caos
                 window.open('https://itakitogt.github.io/itaclicker/#/', '_blank');
-                
-                // 2. Aplicar el overlay y mostrar el gatito x3
+                imagen.src = 'hewillnever_spit.png'; // La imagen del que escupe
                 overlay.style.display = 'block';
                 gatitoGrande.style.display = 'block';
-                
-                // 3. Eliminar la carita troll
-                imagen.style.display = 'none';
             }
         });
     </script>
