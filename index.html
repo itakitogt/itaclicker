@@ -28,20 +28,20 @@
         #btn-google-play { cursor: pointer; }
         #btn-x-post { background: #000; color: white; padding: 10px 20px; border-radius: 50% 10% 50% 10%; text-decoration: none; font-weight: bold; }
 
-        /* Animación del cartel colgado (solo para la carita troll) */
+        /* Animación del cartel colgado para las caritas */
         @keyframes colgado { 
             0% { transform: rotate(3deg); } 
             50% { transform: rotate(-3deg); } 
             100% { transform: rotate(3deg); } 
         }
         
-        /* Imagen Troll en el centro */
+        /* Imagen de las caritas en el centro con su animación de colgado */
         #troll-img { 
             width: 250px; cursor: pointer; 
             animation: colgado 3s infinite ease-in-out; 
             transition: transform 0.1s ease; z-index: 100; 
         }
-        /* Efecto de hundirse al clickear la carita */
+        /* ¡EFECTO CLAVE! Se hunde al dar click (aplica a cualquier carita que esté puesta) */
         #troll-img:active { transform: scale(0.85) !important; }
 
         /* Gatito Dansi2 Gigante (300x300) arriba a la izquierda */
@@ -50,7 +50,7 @@
             display: none; cursor: pointer; z-index: 101; mix-blend-mode: multiply; 
             transition: transform 0.1s ease;
         }
-        /* Efecto de hundirse al clickear el gatito (sin animación de cartel) */
+        /* Efecto de hundirse al clickear el gatito */
         #dansi2-esquina:active { transform: scale(0.85) !important; }
 
         /* Gatito Dansi (normal) para la fase final de 50 clics */
@@ -80,21 +80,28 @@
 </head>
 <body>
 
+    <!-- Capa oscura -->
     <div id="overlay-negro"></div>
 
+    <!-- El gatito dansi2 (Fase 20 clics) -->
     <img id="dansi2-esquina" src="dansi2.gif" alt="Gatito Caos">
 
+    <!-- El gatito final (Fase 50 clics) -->
     <img id="dansi-hacker" src="dansi.gif" alt="Gatito Hacker">
 
+    <!-- Botones arriba a la derecha -->
     <div class="botones-derecha" id="menu-botones">
         <div id="btn-google-play"><img src="getin.png" alt="Google Play" width="250"></div>
         <a href="https://twitter.com/intent/tweet?text=Mira%20esta%20pagina%20troll%20Itaclicker.wtf" target="_blank" id="btn-x-post">X Post</a>
     </div>
 
+    <!-- Imagen de la Carita Principal (Va cambiando de src) -->
     <img id="troll-img" src="troll-face-logo-vector.png" alt="Troll Face">
     
+    <!-- Contador -->
     <div id="contador">0</div>
 
+    <!-- Pantalla de logs de hackeo -->
     <div id="log-container"></div>
 
     <script>
@@ -125,8 +132,12 @@
             displayContador.innerText = clicks;
             document.title = "ItakitoClicker - " + clicks;
 
+            // Cambios de imagen en el camino (Fase inicial de clics normales)
             if (clicks === 10) {
                 imagen.src = 'hewillnever.png';
+            }
+            if (clicks === 15) {
+                imagen.src = 'hewillnever_spit.png'; // Por si quieres meter la que escupe antes del susto
             }
 
             // FASE 20 CLICS: Todo en la misma pestaña
@@ -164,7 +175,7 @@
             }
         };
 
-        // Escuchadores de clics: la carita troll te lleva a los 20, y el gatito dansi2 te lleva a los 50
+        // Ambos elementos suman clics y ahora ambos se hunden de forma responsiva al tocarlos
         imagen.addEventListener('click', registrarClick);
         gatitoDansi2.addEventListener('click', registrarClick);
     </script>
